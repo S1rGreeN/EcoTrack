@@ -1,4 +1,6 @@
-package espol.grupo_11.ecotrack;
+package espol.grupo_11.ecotrack.Utilitarios;
+
+import java.util.Iterator;
 
 public class CircularLinkedList<E> implements List<E> {
     
@@ -72,7 +74,28 @@ public class CircularLinkedList<E> implements List<E> {
     }
     
    public Iterator<E> iterator(){
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return new Iterator<E>(){
+            private final CircularNodeList<E> start = (last == null) ? null : last.getNext();
+            private CircularNodeList<E> cursor = start;
+            private boolean firstCall = true;
+
+            @Override
+            public boolean hasNext() {
+                return cursor != null && (firstCall || cursor != start);
+            }
+
+            @Override
+            public E next() {
+                E value = cursor.getContent();
+                cursor = cursor.getNext();
+                firstCall = false;
+                // if we've wrapped around to the start, stop further iteration by nulling cursor
+                if (cursor == start) {
+                    cursor = null;
+                }
+                return value;
+            }
+        };
     }
 }
 

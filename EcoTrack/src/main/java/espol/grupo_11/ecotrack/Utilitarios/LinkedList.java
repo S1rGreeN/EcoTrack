@@ -1,4 +1,4 @@
-package espol.grupo_11.ecotrack;
+package espol.grupo_11.ecotrack.Utilitarios;
 import java.util.Iterator;
 
 public class LinkedList<E> implements List<E>{
@@ -105,7 +105,8 @@ public class LinkedList<E> implements List<E>{
             current = current.getNext();
         }
         E contenido = last.getContent();
-        last = setNext(null);
+        current.setNext(null);
+        last = current;
         return contenido;
     }
 

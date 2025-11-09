@@ -1,4 +1,6 @@
-package espol.grupo_11.ecotrack;
+package espol.grupo_11.ecotrack.Utilitarios;
+
+import java.util.Iterator;
 
 public class DoublyLinkedList<E> implements List<E> {
     
@@ -34,13 +36,21 @@ public class DoublyLinkedList<E> implements List<E> {
         this.last = last;
     }
     
-    public void getPrevious(NodeList<E> node){
-        return previous;
+    private DoublyNodeList<E> getPrevious(DoublyNodeList<E> node) {
+        if (node == header) {
+            return null;
+        }
+        DoublyNodeList<E> current = header;
+        while (current != null && current.getNext() != node) {
+            current = current.getNext();
+        }
+        return current;
     }
    
     private void recorrerHaciaAtras(){
         DoublyNodeList<E> n;
-        for (n = last ; n != header; n = n.getPrevious()){
+        for (n = last; n != null; n = n.getPrevious()) {
+            System.out.println(n.getContent());
         }
     }
     
@@ -137,6 +147,25 @@ public class DoublyLinkedList<E> implements List<E> {
     @Override
     public E set(int index, E element) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    public Iterator<E> iterator() {
+        Iterator<E> it = new Iterator<E>() {
+            private DoublyNodeList<E> cursor = header;
+            
+            @Override
+            public boolean hasNext() {
+                return cursor != null;
+            }
+
+            @Override
+            public E next() {
+                E e = cursor.getContent();
+                cursor = cursor.getNext();
+                return e;
+            }
+        };
+        return it;
     }
 }
 

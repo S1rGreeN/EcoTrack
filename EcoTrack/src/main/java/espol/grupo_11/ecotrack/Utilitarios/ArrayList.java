@@ -1,4 +1,5 @@
-package espol.grupo_11.ecotrack;
+package espol.grupo_11.ecotrack.Utilitarios;
+import java.util.Iterator;
 
 public class ArrayList<E> implements List<E>{
 

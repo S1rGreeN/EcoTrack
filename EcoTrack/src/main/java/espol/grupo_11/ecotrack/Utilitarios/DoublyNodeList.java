@@ -1,4 +1,4 @@
-package espol.grupo_11.ecotrack;
+package espol.grupo_11.ecotrack.Utilitarios;
 
 public class DoublyNodeList<E> {
     private E content;
@@ -27,7 +27,7 @@ public class DoublyNodeList<E> {
         this.next = next;
     }
 
-    public boolean getPrevious(DoublyNodeList<E> node){
+    public DoublyNodeList<E> getPrevious(){
         return previous;
     }
 
