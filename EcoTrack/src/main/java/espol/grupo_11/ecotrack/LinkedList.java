@@ -70,20 +70,43 @@ public class LinkedList<E> implements List<E>{
     
     private void recorrerHaciAtras(){
         NodeList<E> n;
-        
+
         for (n = last; n != header; n = this.getPrevious(n)){
             System.out.println(n);
         }
-    }
+    } 
     
     @Override
     public E removeFirst() {
-        //size--;
+        if(size() == 0){
+            return null;
+        }
+        E contenido = header.getContent();
+        header = header.getNext();
+        if(header == null){
+            last = null;
+        }
+        return contenido;
     }
 
     @Override
     public E removeLast() {
-        //size--;
+        if(header == null){
+            return null;
+        }
+        if(header == last){
+            E contenido = last.getContent();
+            header = null;
+            last = null;
+            return contenido;
+        }
+        NodeList<E> current = header;
+        while(current.getNext() != last){
+            current = current.getNext();
+        }
+        E contenido = last.getContent();
+        last = setNext(null);
+        return contenido;
     }
 
     @Override
