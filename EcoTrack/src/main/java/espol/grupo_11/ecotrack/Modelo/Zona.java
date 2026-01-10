@@ -1,12 +1,16 @@
 package espol.grupo_11.ecotrack.Modelo;
 
 import espol.grupo_11.ecotrack.Utilitarios.CircularDoubleLinkedList;
-import java.util.Iterator;
 
-public class Zona {
-    CircularDoubleLinkedList<Residuo> listaResiduos;
-    String codigo; //Definir si usamos el codigo postal de la parroquia o el codigo postal de cada zona de guayaquil.
-    int cantidadResiduosRecolectados; 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+
+public class Zona implements Serializable{
+    private CircularDoubleLinkedList<Residuo> listaResiduos;
+    private String codigo; //Definir si usamos el codigo postal de la parroquia o el codigo postal de cada zona de guayaquil.
+    private int cantidadResiduosRecolectados;
+    private LocalDateTime ultimaRecoleccion; 
     /*Definir si se usa por dias con hilos con varios procesos de recoleccion o si 
     se reinicia por semanas con hilos(lo veo viable, es lo mas realista, 
     ya que un camion de basura pasa por toda la ciudad en la semana).  */
@@ -17,25 +21,21 @@ public class Zona {
     }
     public CircularDoubleLinkedList<Residuo> getListaResiduos(){return listaResiduos;}
     public String getCodigo(){return codigo;}
+    public int getCantidadResiduosRecolectados(){return cantidadResiduosRecolectados;}
+    public LocalDateTime getUltimaRecoleccion(){return ultimaRecoleccion;}
 
-
-    public boolean botarResiduo(Residuo nuevoResiduo){
+    public int getPrioridadAtencion(){
+        return listaResiduos.size();
+    }
+    /*public boolean botarResiduo(Residuo nuevoResiduo){
         if(nuevoResiduo == null){return false;}
         listaResiduos.addLast(nuevoResiduo);
         return true;
-    }
-    public int getPrioridadAmbiental(){
-        int contador = 0;
-        Iterator<T> it = listaResiduos.iterator();
-        if(!it.hasNext()){
-            return 0;
-        }
-        Residuo prev = it.next();
-        contador += prev.getPrioridadAmbiental();
-        while(!it.hasNext()){
-            Residuo current = it.next();
-            contador += current.getPrioridadAmbiental();
-        }
-        return contador;
-    }
+    } */
+    
+
+    /*Cuando el metodo de reloeccion se implemente, 
+    se debe actualizar la ultimaRecoleccion y la cantidadResiduosRecolectados
+    a su vez que se vacia la pila del centro de recoleccion.
+    */
 }

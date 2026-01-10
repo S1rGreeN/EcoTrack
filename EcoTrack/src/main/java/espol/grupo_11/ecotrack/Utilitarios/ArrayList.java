@@ -5,7 +5,7 @@ public class ArrayList<E> implements List<E>{
 
     private E[] elements = null; //arreglo de elementos genericos
     private int capacity = 100;
-    private int effectiveSize;
+    private int effectiveSize = 0;
     
     public ArrayList (){
         
@@ -16,7 +16,7 @@ public class ArrayList<E> implements List<E>{
         //elements = new E[100]; NO FUNCIONA
         
         elements = (E[])(new Object[capacity]); // SI FUNCIONA con Casting permitido con el arrayList
-        effectiveSize = 0;
+        
     }
     
     private boolean isFull(){
@@ -52,8 +52,7 @@ public class ArrayList<E> implements List<E>{
     public boolean addLast(E e) {
        if (e == null) {
             return false;
-        }
-        if (isFull()) {
+        } else if (isFull()) {
             addCapacity();
         }
         elements[effectiveSize] = e;
@@ -64,12 +63,26 @@ public class ArrayList<E> implements List<E>{
 
     @Override
     public E removeFirst() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if(isEmpty()){
+            return null;
+        }
+        E primerito = elements[0];
+        for(int i=1; i<effectiveSize; i++){
+            elements[i-1]=elements[i]; //bit shifting
+        }
+        effectiveSize--;
+        return primerito;
     }
 
     @Override
     public E removeLast() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if(isEmpty()){
+            return null;
+        }
+        E ultimito = elements[effectiveSize-1];
+        elements[effectiveSize-1]=null;
+        effectiveSize--;
+        return ultimito;
     }
 
     @Override
@@ -84,15 +97,17 @@ public class ArrayList<E> implements List<E>{
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        for(int i=0; i<effectiveSize; i++){
+            elements[i]=null;
+        }
+        effectiveSize=0;
     }
 
     @Override
     public void add(int index, E element) {
-        if (index < 0 || index > effectiveSize) {
+        if (index < 0 || index > effectiveSize || element == null) {
             throw new IndexOutOfBoundsException("Invalid index: " + index);
-        }
-        if (isFull()) {
+        } else if (isFull()) {
             addCapacity();
         }
         for (int i = effectiveSize; i > index; i--) {
@@ -105,17 +120,34 @@ public class ArrayList<E> implements List<E>{
 
     @Override
     public E remove(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (index < 0 || index >= effectiveSize) {
+            throw new IndexOutOfBoundsException("Invalid index: " + index);
+        }
+        E removedElement = elements[index];
+        for (int i = index + 1; i < effectiveSize; i++) {
+            elements[i - 1] = elements[i];
+        }
+        elements[effectiveSize - 1] = null;
+        effectiveSize--;
+        return removedElement;
     }
 
     @Override
     public E get(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (index < 0 || index >= effectiveSize) {
+            throw new IndexOutOfBoundsException("Invalid index: " + index);
+        }
+        return elements[index];
     }
 
     @Override
     public E set(int index, E element) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (index < 0 || index >= effectiveSize || element == null) {
+            throw new IndexOutOfBoundsException("Invalid index: " + index);
+        }
+        E viejito = elements[index];
+        elements[index] = element;
+        return viejito;
     }
 
     private void addCapacity() {

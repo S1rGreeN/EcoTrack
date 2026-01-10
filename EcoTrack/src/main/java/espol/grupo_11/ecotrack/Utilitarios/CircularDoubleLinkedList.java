@@ -14,11 +14,11 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
     public int size(){
         if(isEmpty()){return 0;}
         int contador = 0;
-        DoublyNodeList<T> current;
+        DoublyNodeList<T> current = head;
         do{
             contador++;
             current = current.getNext();
-        } while(curreant!=head);
+        } while(current!=head);
         return contador;
     }
 
@@ -51,14 +51,14 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
     public boolean remove(T content){
         if (isEmpty()) {return false;}
 
-        Node<T> current = head;
+        DoublyNodeList<T> current = head;
         do {
             if (current.getContent().equals(content)) {
                 if (current.getNext() == current) {
                     head = null;
                 } else {
-                    Node<T> prevNode = current.getPrevious();
-                    Node<T> nextNode = current.getNext();
+                    DoublyNodeList<T> prevNode = current.getPrevious();
+                    DoublyNodeList<T> nextNode = current.getNext();
                     prevNode.setNext(nextNode);
                     nextNode.setPrevious(prevNode);
                     if (current == head) {
@@ -73,5 +73,11 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
         return false;
     }
     //Definir si agregamos los metodos remove y add por indices
+
+    @Override
+    public Iterator<T> iterator() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
+    }
 
 }
