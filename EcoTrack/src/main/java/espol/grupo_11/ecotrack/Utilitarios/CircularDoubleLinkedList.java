@@ -1,5 +1,8 @@
 package espol.grupo_11.ecotrack.Utilitarios;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import espol.grupo_11.ecotrack.Modelo.Residuo;
 
 public class CircularDoubleLinkedList<T> implements Iterable<T> {
     private DoublyNodeList<T> head; 
@@ -75,9 +78,40 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
     //Definir si agregamos los metodos remove y add por indices
 
     @Override
-    public Iterator<T> iterator() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
+    public Iterator<T> iterator(){
+        Iterator<T> it=new Iterator<T>() {
+                DoublyNodeList<T> cursor = head;
+
+                @Override
+                public boolean hasNext() {
+                    return cursor != null;
+                }
+
+                @Override
+                public T next() {
+                    T t = cursor.getContent();
+                    cursor = cursor.getNext();
+                    return t;
+                }
+            };
+        return it;
+    }
+
+    public T removeFirst() {
+        if(isEmpty()) {
+            return null;
+        }
+        T content = head.getContent();
+        if(head.getNext() == head) {
+            head = null;
+            return content;
+        } 
+        DoublyNodeList<T> prevNode = head.getPrevious();
+        DoublyNodeList<T> nextNode = head.getNext();
+        prevNode.setNext(nextNode);
+        nextNode.setPrevious(prevNode);
+        head = nextNode;
+        return content;
     }
 
 }

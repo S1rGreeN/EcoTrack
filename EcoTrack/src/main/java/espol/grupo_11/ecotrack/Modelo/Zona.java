@@ -18,6 +18,8 @@ public class Zona implements Serializable{
     public Zona(CircularDoubleLinkedList<Residuo> listaResiduos, String codigo){
         this.listaResiduos = listaResiduos;
         this.codigo = codigo;
+        this.cantidadResiduosRecolectados = 0;
+        this.ultimaRecoleccion = null;
     }
     public CircularDoubleLinkedList<Residuo> getListaResiduos(){return listaResiduos;}
     public String getCodigo(){return codigo;}
@@ -26,6 +28,25 @@ public class Zona implements Serializable{
 
     public int getPrioridadAtencion(){
         return listaResiduos.size();
+    }
+
+    //Metodo Auxiliar para pruebas
+    public void setUltimaRecoleccion(LocalDateTime ultimaRecoleccion){
+        this.ultimaRecoleccion = ultimaRecoleccion;
+    }
+
+   
+    public void actualizarRecoleccion(){
+        this.cantidadResiduosRecolectados ++;
+        this.ultimaRecoleccion = LocalDateTime.now();
+    }
+    public Residuo removeFirstListaResiduos(){
+        return this.listaResiduos.removeFirst();
+    }
+
+    public String toString(){
+        return "Zona{" + "codigo=" + codigo + ", cantidadResiduosRecolectados=" + cantidadResiduosRecolectados +
+         ", ultimaRecoleccion=" + ultimaRecoleccion + '}';
     }
     /*public boolean botarResiduo(Residuo nuevoResiduo){
         if(nuevoResiduo == null){return false;}
