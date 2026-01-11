@@ -62,7 +62,6 @@ public class EcoTrack {
             controladorCentroRecoleccion.iniciarRecoleccionCarrito();
         } */
         controladorCentroRecoleccion.iniciarRecoleccionCarrito();
-        // 
         
     }  
     
