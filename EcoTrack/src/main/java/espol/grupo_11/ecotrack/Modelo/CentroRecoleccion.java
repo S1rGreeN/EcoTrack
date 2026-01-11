@@ -19,6 +19,7 @@ public class CentroRecoleccion implements Serializable {
     private TreeMap<TipoResiduo, LinkedList<Residuo>> mapaListaResiduosPorTipo;
     private TreeMap<String, LinkedList<Residuo>> mapaListaResiduosPorZona;
     private TreeMap<String, LinkedList<Residuo>> mapaListaResiduosPorPrioridadAmbiental;
+    private java.util.List<Residuo> residuosGenerados;
     public CentroRecoleccion(PriorityQueue<Zona> zonasUrbanas,Deque<Residuo> pilaResiduos){
         this.zonasUrbanas = zonasUrbanas;
         this.pilaResiduos = pilaResiduos;  
@@ -34,20 +35,30 @@ public class CentroRecoleccion implements Serializable {
         }
         this.mapaListaResiduosPorZona = new TreeMap<>();
         this.mapaListaResiduosPorPrioridadAmbiental = new TreeMap<>();
+        this.residuosGenerados = new java.util.ArrayList<>();
     }
     public Deque<Residuo> getPilaResiduos(){return pilaResiduos;}
     public void addPilaResiduos(Residuo residuo){this.pilaResiduos.push(residuo);}
+
+    // Registra residuos generados (manuales y automáticos)
+    public void addResiduoGenerado(Residuo residuo) { if (residuo != null) this.residuosGenerados.add(residuo); }
+    public java.util.List<Residuo> getResiduosGenerados() { return this.residuosGenerados; }
     public PriorityQueue<Zona> getZonasUrbanas(){return zonasUrbanas;}
     public void addColaResiduos(Residuo residuo){this.colaResiduosRecolectadosPesos.add(residuo);}
 
-    public TreeMap<TipoResiduo, LinkedList<Residuo>> getMapaListaResiduosPorTipo() {
-        return mapaListaResiduosPorTipo;
+    public java.util.PriorityQueue<Residuo> getColaResiduosRecolectadosPesos() {
+        return colaResiduosRecolectadosPesos;
     }
+
+    
 
     public TreeMap<String, LinkedList<Residuo>> getMapaListaResiduosPorZona() {
         return mapaListaResiduosPorZona;
     }
 
+    public TreeMap<TipoResiduo, LinkedList<Residuo>> getMapaListaResiduosPorTipo() {
+        return mapaListaResiduosPorTipo;
+    }
     public TreeMap<String, LinkedList<Residuo>> getMapaListaResiduosPorPrioridadAmbiental() {
         return mapaListaResiduosPorPrioridadAmbiental;
     }
@@ -70,3 +81,4 @@ public class CentroRecoleccion implements Serializable {
     }
 
 }
+

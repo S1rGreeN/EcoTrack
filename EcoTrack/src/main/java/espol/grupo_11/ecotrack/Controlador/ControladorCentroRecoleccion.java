@@ -32,7 +32,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
         //Codigo heavy
         Iterator<Zona> it= centroRecoleccion.getZonasUrbanas().iterator();
         try{
-            Thread.sleep(100);
+            Thread.sleep(5000);
         } catch(InterruptedException e){
             e.printStackTrace();
         }
@@ -85,7 +85,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                 } 
                 //zonaActual = it.next();
                 try{
-                    Thread.sleep(50);
+                    Thread.sleep(2000);
                 } catch(InterruptedException e){
                     System.out.println("Error en el hilo de recoleccion");
                 }
@@ -216,11 +216,15 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
         }
         try {
             zonaEncontrada.getListaResiduos().addLast(nuevo);
+            centroRecoleccion.addResiduoGenerado(nuevo);
         } catch (Exception e) {
             return false;
         }
         pq.remove(zonaEncontrada);
         pq.add(zonaEncontrada);
+
+        // Registrar residuo generado para la sección central
+        centroRecoleccion.addResiduoGenerado(nuevo);
 
         return true;
     }

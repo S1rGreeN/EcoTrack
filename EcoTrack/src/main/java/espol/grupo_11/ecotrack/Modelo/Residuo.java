@@ -37,6 +37,8 @@ public class Residuo implements Serializable {
     }
 
     // Getters 
+    public String getId() { return id; }
+    public String getNombre() { return nombre; }
     public TipoResiduo getTipo() { return tipo; }
     public double getPeso() { return peso; }
     public LocalDateTime getFechaRecoleccion() { return fechaRecoleccion;}

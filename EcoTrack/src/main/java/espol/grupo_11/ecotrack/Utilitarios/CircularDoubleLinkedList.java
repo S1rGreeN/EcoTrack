@@ -1,8 +1,5 @@
 package espol.grupo_11.ecotrack.Utilitarios;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import espol.grupo_11.ecotrack.Modelo.Residuo;
 
 public class CircularDoubleLinkedList<T> implements Iterable<T> {
     private DoublyNodeList<T> head; 
@@ -81,10 +78,14 @@ public class CircularDoubleLinkedList<T> implements Iterable<T> {
     public Iterator<T> iterator(){
         Iterator<T> it=new Iterator<T>() {
                 DoublyNodeList<T> cursor = head;
-
+                DoublyNodeList<T> inicio = head;
+                boolean first = true;
                 @Override
                 public boolean hasNext() {
-                    return cursor != null;
+                    if(cursor != inicio){
+                        first = false;
+                    }
+                    return cursor != inicio || first;
                 }
 
                 @Override
