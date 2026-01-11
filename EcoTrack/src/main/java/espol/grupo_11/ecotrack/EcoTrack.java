@@ -6,10 +6,8 @@ package espol.grupo_11.ecotrack;
 import java.time.LocalDateTime;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.Comparator;
 
 import espol.grupo_11.ecotrack.Controlador.ControladorCentroRecoleccion;
@@ -56,7 +54,103 @@ public class EcoTrack {
         Deque<Residuo> pilaResiduos = new ArrayDeque<>();
         CentroRecoleccion centro = new CentroRecoleccion(zonasUrbanas, pilaResiduos);
         ControladorCentroRecoleccion controladorCentroRecoleccion = new ControladorCentroRecoleccion(centro);
-        controladorCentroRecoleccion.iniciarRecoleccionCarrito();
+
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        int opcion = -1;
+        do {
+            System.out.println("\n===== Menú =====");
+            System.out.println("1. Iniciar Carrito");
+            System.out.println("2. Generar Residuo");
+            System.out.println("3. Ver info zonas (imprimirZonasPorPrioridad)");
+            System.out.println("0. Salir");
+            System.out.print("Seleccione una opción: ");
+            String linea = scanner.nextLine().trim();
+            try {
+                opcion = Integer.parseInt(linea);
+            } catch (NumberFormatException e) {
+                opcion = -1;
+            }
+
+            switch (opcion) {
+                case 1:
+                    controladorCentroRecoleccion.iniciarRecoleccionCarrito();
+                    System.out.println("Carrito iniciado.");
+                    break;
+                case 2:
+                    // Generar residuo interactivo — elegir por nombre o índice
+                    System.out.println("Zonas disponibles:");
+                    int listIndex = 1;
+                    for (Zona z : zonasUrbanas) {
+                        System.out.println(listIndex + ". " + z.getNombre() + " (" + z.getCodigo() + ")");
+                        listIndex++;
+                    }
+                    System.out.print("Seleccione zona (número o nombre): ");
+                    String seleccion = scanner.nextLine().trim();
+
+                    Zona zonaSel = null;
+                    // Intentar parsear como número
+                    try {
+                        int selIdx = Integer.parseInt(seleccion);
+                        if (selIdx >= 1 && selIdx < listIndex) {
+                            int i = 1;
+                            for (Zona z : zonasUrbanas) {
+                                if (i == selIdx) { zonaSel = z; break; }
+                                i++;
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        // no es número: buscar por nombre (case-insensitive, allow contains)
+                        for (Zona z : zonasUrbanas) {
+                            if (z.getNombre().equalsIgnoreCase(seleccion) || z.getNombre().toLowerCase().contains(seleccion.toLowerCase())) {
+                                zonaSel = z; break;
+                            }
+                        }
+                    }
+
+                    if (zonaSel == null) {
+                        System.out.println("Zona no encontrada: " + seleccion);
+                        break;
+                    }
+
+                    System.out.print("ID del residuo: ");
+                    String id = scanner.nextLine().trim();
+                    System.out.print("Nombre del residuo: ");
+                    String nombreResiduo = scanner.nextLine().trim();
+
+                    System.out.println("Tipos disponibles:");
+                    TipoResiduo[] tipos = TipoResiduo.values();
+                    for (int i = 0; i < tipos.length; i++) {
+                        System.out.println((i+1) + ". " + tipos[i].getNombre());
+                    }
+                    System.out.print("Seleccione tipo (número): ");
+                    int tipoIdx = 1;
+                    try { tipoIdx = Integer.parseInt(scanner.nextLine().trim()); } catch (Exception e) { tipoIdx = 1; }
+                    if (tipoIdx < 1 || tipoIdx > tipos.length) tipoIdx = 1;
+                    TipoResiduo tipoSel = tipos[tipoIdx-1];
+
+                    System.out.print("Peso (kg): ");
+                    double peso = 0.1;
+                    try { peso = Double.parseDouble(scanner.nextLine().trim()); } catch (Exception e) { peso = 0.1; }
+
+                    System.out.print("Prioridad (1-5): ");
+                    int prioridad = 1;
+                    try { prioridad = Integer.parseInt(scanner.nextLine().trim()); } catch (Exception e) { prioridad = 1; }
+
+                    boolean agregado = controladorCentroRecoleccion.nuevoResiduo(id, nombreResiduo, tipoSel, peso, zonaSel.getCodigo(), prioridad);
+                    System.out.println("Residuo agregado a zona " + zonaSel.getNombre() + " (" + zonaSel.getCodigo() + "): " + agregado);
+                    break;
+                case 3:
+                    imprimirZonasPorPrioridad(zonasUrbanas);
+                    break;
+                case 0:
+                    System.out.println("Saliendo...");
+                    break;
+                default:
+                    System.out.println("Opción inválida.");
+            }
+
+        } while (opcion != 0);
+        scanner.close();
     }
 
     private static CircularDoubleLinkedList<Residuo> crearListaResiduos(String codigoZona, int cantidad, int baseId, Random random) {
