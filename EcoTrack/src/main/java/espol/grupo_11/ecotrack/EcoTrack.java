@@ -8,6 +8,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.Comparator;
 
@@ -31,52 +32,45 @@ public class EcoTrack {
             }
         });
 
-        // Ejemplos de zonas con 18-25 residuos cada una (listas para insertar en la PriorityQueue)
-        zonasUrbanas.add(new Zona(crearListaResiduos("URB-NORTE-01", 20, 1000), "URB-NORTE-01"));
-        zonasUrbanas.add(new Zona(crearListaResiduos("URB-CENTRO-07", 18, 2000), "URB-CENTRO-07"));
-        zonasUrbanas.add(new Zona(crearListaResiduos("URB-SUR-12", 25, 3000), "URB-SUR-12"));
-        zonasUrbanas.add(new Zona(crearListaResiduos("URB-ESTE-03", 22, 4000), "URB-ESTE-03"));
-        int contador = 0;
-        for(Zona z : zonasUrbanas){
-            if(contador % 2 == 0){
-                z.setUltimaRecoleccion(LocalDateTime.of(2026, 1, 8, 21, 14));
-                System.out.println("Zona agregada: "+z.getCodigo()+" con "+z.getListaResiduos().size()+" residuos.");
-                contador++;
-            } else{
-                z.setUltimaRecoleccion(LocalDateTime.of(2026, 1, 9, 21, 14));
-                System.out.println("Zona agregada: "+z.getCodigo()+" con "+z.getListaResiduos().size()+" residuos.");
-                contador++;
-            }
+        String[] nombres = new String[] {"Alborada","Bastión Popular","Cerro Colorado","El Fortín","El Guasmo","La Alborada","La Merced","Los Esteros","Los Samanes","Miraflores","Octava","Samborondón","San Eduardo","San Francisco","Tarqui","Urdesa"};
+        Random random = new Random(12345);
 
+        int idx = 1;
+        for (String nombreZona : nombres) {
+            String codigo = String.format("GYE-0%02d", idx);
+            int cantidad = 15 + random.nextInt(16); // 15..30
+            CircularDoubleLinkedList<Residuo> lista = crearListaResiduos(codigo, cantidad, idx * 1000, random);
+            Zona z = new Zona(lista, nombreZona, codigo);
+            if (idx <= 8) {
+                z.setUltimaRecoleccion(LocalDateTime.of(2026, 1, 9, 8, 0));
+            } else {
+                z.setUltimaRecoleccion(LocalDateTime.of(2026, 1, 10, 8, 0));
+            }
+            zonasUrbanas.add(z);
+            System.out.println("Zona agregada: " + codigo + " | nombre=" + nombreZona + " | residuos=" + cantidad + " | ultimaRecoleccion=" + z.getUltimaRecoleccion());
+            idx++;
         }
+
         System.out.println("=== PriorityQueue (antes de iniciar recolección) ===");
         imprimirZonasPorPrioridad(zonasUrbanas);
-
         Deque<Residuo> pilaResiduos = new ArrayDeque<>();
         CentroRecoleccion centro = new CentroRecoleccion(zonasUrbanas, pilaResiduos);
         ControladorCentroRecoleccion controladorCentroRecoleccion = new ControladorCentroRecoleccion(centro);
-
-        // Para iniciar el hilo de recolección: ejecutar con argumento "run"
-        // Ejemplo: mvn -q exec:java -Dexec.args="run"
-        /*if (args.length > 0 && "run".equalsIgnoreCase(args[0])) {
-            controladorCentroRecoleccion.iniciarRecoleccionCarrito();
-        } */
         controladorCentroRecoleccion.iniciarRecoleccionCarrito();
-        
-    }  
-    
-    private static CircularDoubleLinkedList<Residuo> crearListaResiduos(String codigoZona, int cantidad, int baseId) {
-        if (cantidad < 18 || cantidad > 25) {
-            throw new IllegalArgumentException("Cada zona debe tener entre 18 y 25 residuos.");
+    }
+
+    private static CircularDoubleLinkedList<Residuo> crearListaResiduos(String codigoZona, int cantidad, int baseId, Random random) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("Cantidad debe ser positiva.");
         }
 
         CircularDoubleLinkedList<Residuo> lista = new CircularDoubleLinkedList<>();
         TipoResiduo[] tipos = TipoResiduo.values();
 
         for (int i = 1; i <= cantidad; i++) {
-            TipoResiduo tipo = tipos[(i - 1) % tipos.length];
-            double peso = 0.4 + ((i % 9) * 0.35); // peso determinístico (evita random)
-            int prioridadAmbiental = 1 + (i % 5);
+            TipoResiduo tipo = tipos[random.nextInt(tipos.length)];
+            double peso = Math.round((0.05 + (random.nextDouble() * 4.95)) * 100.0) / 100.0; // 0.05 - 5.0 kg, 2 decimales
+            int prioridadAmbiental = 1 + random.nextInt(5); // 1-5
             String id = "R-" + codigoZona + "-" + (baseId + i);
             String nombre = "Residuo-" + i + "-" + tipo.getNombre();
 

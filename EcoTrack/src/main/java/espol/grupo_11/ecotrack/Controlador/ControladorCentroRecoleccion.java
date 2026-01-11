@@ -32,7 +32,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
         //Codigo heavy
         Iterator<Zona> it= centroRecoleccion.getZonasUrbanas().iterator();
         try{
-            Thread.sleep(10);
+            Thread.sleep(100);
         } catch(InterruptedException e){
             e.printStackTrace();
         }
@@ -85,43 +85,44 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                 } 
                 //zonaActual = it.next();
                 try{
-                    Thread.sleep(5);
+                    Thread.sleep(50);
                 } catch(InterruptedException e){
                     System.out.println("Error en el hilo de recoleccion");
                 }
             }
             
         }
-        centroRecoleccion.printZonasUrbanas();
+        centroRecoleccion.printZonasUrbanas();/*
         int contador =1;
         for(Residuo r : centroRecoleccion.getPilaResiduos()){
             System.out.println(contador + " " + r.toString());
             contador++;
-        }
+        }*/
+       System.out.println("Tamaño de la pila de residuos antes de procesar: " + centroRecoleccion.getPilaResiduos().size());
         boolean validacion = procesarResiduos();
         if(validacion){
-            System.out.println(centroRecoleccion.getPilaResiduos().size());
+            System.out.println("Tamaño de la pila de residuos luego de procesar: " + centroRecoleccion.getPilaResiduos().size());
         } else {
             System.out.println("No se pudo procesar los residuos del centro de recolección.");
         }
+        int contadorTipo =0;
         for(TipoResiduo tipo: centroRecoleccion.getMapaListaResiduosPorTipo().keySet()){
-            System.out.println("Tipo de residuo: "+ tipo.getNombre());
-            for(Residuo r: centroRecoleccion.getMapaListaResiduosPorTipo().get(tipo)){
-                System.out.println(r.toString());
-            }
+            System.out.println("Tipo "+ tipo.getNombre() + " Tamaño lista: "+ centroRecoleccion.getMapaListaResiduosPorTipo().get(tipo).size());
+            contadorTipo=contadorTipo+ centroRecoleccion.getMapaListaResiduosPorTipo().get(tipo).size();
         }
+        System.out.println("Tama,ño total por tipo: "+ contadorTipo);
+        int contadorZona =0;
         for(String zona: centroRecoleccion.getMapaListaResiduosPorZona().keySet()){
-            System.out.println("Zona: "+ zona);
-            for(Residuo r: centroRecoleccion.getMapaListaResiduosPorZona().get(zona)){
-                System.out.println(r.toString());
-            }
+            System.out.println("Zona: "+ zona + " Tamaño lista: "+ centroRecoleccion.getMapaListaResiduosPorZona().get(zona).size());
+            contadorZona=contadorZona+ centroRecoleccion.getMapaListaResiduosPorZona().get(zona).size();
         }
+        System.out.println("Tamaño total por zona: "+ contadorZona);
+        int contadorPrioridad =0;
         for(String prioridad: centroRecoleccion.getMapaListaResiduosPorPrioridadAmbiental().keySet()){
-            System.out.println("Prioridad Ambiental: "+ prioridad);
-            for(Residuo r: centroRecoleccion.getMapaListaResiduosPorPrioridadAmbiental().get(prioridad)){
-                System.out.println(r.toString());  
-            }
+            System.out.println("Prioridad: "+ prioridad + " Tamaño lista: "+ centroRecoleccion.getMapaListaResiduosPorPrioridadAmbiental().get(prioridad).size());
+            contadorPrioridad=contadorPrioridad+ centroRecoleccion.getMapaListaResiduosPorPrioridadAmbiental().get(prioridad).size();
         }
+        System.out.println("Tamaño total por prioridad: "+ contadorPrioridad);
     }
     
     public void iniciarRecoleccionCarrito(){
@@ -189,6 +190,37 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
 
 
     public boolean nuevoResiduo(String id, String nombre, TipoResiduo tipo, double peso, String zona, int prioridad){
+        if (id == null || id.isBlank() || nombre == null || nombre.isBlank() || tipo == null || peso <= 0 || zona == null || zona.isBlank()) {
+            return false;
+        }
+        if (prioridad < 1) prioridad = 1;
+        if (prioridad > 5) prioridad = 5;
+
+        Residuo nuevo = new Residuo(id, nombre, tipo, peso, zona, prioridad);
+
+        java.util.PriorityQueue<Zona> pq = centroRecoleccion.getZonasUrbanas();
+        if (pq == null || pq.isEmpty()) {
+            return false;
+        }
+
+        Zona zonaEncontrada = null;
+        for (Zona z : pq) {
+            if (zona.equals(z.getCodigo())) {
+                zonaEncontrada = z;
+                break;
+            }
+        }
+
+        if (zonaEncontrada == null) {
+            return false;
+        }
+        try {
+            zonaEncontrada.getListaResiduos().addLast(nuevo);
+        } catch (Exception e) {
+            return false;
+        }
+        pq.remove(zonaEncontrada);
+        pq.add(zonaEncontrada);
 
         return true;
     }

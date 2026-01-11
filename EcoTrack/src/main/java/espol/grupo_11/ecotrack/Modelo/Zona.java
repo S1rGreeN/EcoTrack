@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 public class Zona implements Serializable{
     private CircularDoubleLinkedList<Residuo> listaResiduos;
+    private String nombre;
     private String codigo; //Definir si usamos el codigo postal de la parroquia o el codigo postal de cada zona de guayaquil.
     private int cantidadResiduosRecolectados;
     private LocalDateTime ultimaRecoleccion; 
@@ -15,8 +16,9 @@ public class Zona implements Serializable{
     se reinicia por semanas con hilos(lo veo viable, es lo mas realista, 
     ya que un camion de basura pasa por toda la ciudad en la semana).  */
 
-    public Zona(CircularDoubleLinkedList<Residuo> listaResiduos, String codigo){
+    public Zona(CircularDoubleLinkedList<Residuo> listaResiduos, String nombre, String codigo){
         this.listaResiduos = listaResiduos;
+        this.nombre = nombre;
         this.codigo = codigo;
         this.cantidadResiduosRecolectados = 0;
         this.ultimaRecoleccion = null;
@@ -25,6 +27,7 @@ public class Zona implements Serializable{
     public String getCodigo(){return codigo;}
     public int getCantidadResiduosRecolectados(){return cantidadResiduosRecolectados;}
     public LocalDateTime getUltimaRecoleccion(){return ultimaRecoleccion;}
+    public String getNombre(){return nombre;}
 
     public int getPrioridadAtencion(){
         return listaResiduos.size();
@@ -45,7 +48,8 @@ public class Zona implements Serializable{
     }
 
     public String toString(){
-        return "Zona{" + "codigo=" + codigo + ", cantidadResiduosRecolectados=" + cantidadResiduosRecolectados +
+        return "Zona{" + "nombre=" + nombre + ", codigo=" + codigo +
+        ", cantidadResiduosRecolectados=" + cantidadResiduosRecolectados +
          ", ultimaRecoleccion=" + ultimaRecoleccion + '}';
     }
     /*public boolean botarResiduo(Residuo nuevoResiduo){
