@@ -1,6 +1,10 @@
 package espol.grupo_11.ecotrack.Utilitarios;
 
-public class DoublyNodeList<E> {
+import java.io.Serializable;
+
+public class DoublyNodeList<E> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private E content;
     private DoublyNodeList<E> next;
     private DoublyNodeList<E> previous;
