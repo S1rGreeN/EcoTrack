@@ -17,6 +17,26 @@ import espol.grupo_11.ecotrack.Modelo.Zona;
 import espol.grupo_11.ecotrack.Utilitarios.*; 
 
 public class App {
+        private static CircularDoubleLinkedList<Residuo> crearListaResiduos(String codigoZona, int cantidad, int baseId, Random random) {
+            if (cantidad <= 0) {
+                throw new IllegalArgumentException("Cantidad debe ser positiva.");
+            }
+
+            CircularDoubleLinkedList<Residuo> lista = new CircularDoubleLinkedList<>();
+            TipoResiduo[] tipos = TipoResiduo.values();
+
+            for (int i = 1; i <= cantidad; i++) {
+                TipoResiduo tipo = tipos[random.nextInt(tipos.length)];
+                double peso = Math.round((0.05 + (random.nextDouble() * 4.95)) * 100.0) / 100.0;
+                int prioridadAmbiental = 1 + random.nextInt(5);
+                String id = "R-" + codigoZona + "-" + (baseId + i);
+                String nombre = "Residuo-" + i + "-" + tipo.getNombre();
+
+                lista.addLast(new Residuo(id, nombre, tipo, peso, codigoZona, prioridadAmbiental));
+            }
+            return lista;
+        }
+
     public static void main(String[] args) {
         PriorityQueue<Zona> zonasUrbanas = new PriorityQueue<Zona>(new Comparator<Zona>(){
             @Override
@@ -168,6 +188,7 @@ public class App {
                     break;
 
                 case 3:
+                    scanner.nextLine();
                     System.out.print("Seleccione zona para ver residuos (número ): ");
                     int contadorZonas = 1;
                     for(String zona: nombres){
@@ -202,6 +223,7 @@ public class App {
                             }
                             break;
                         case 2: 
+                            scanner.nextLine();
                             TreeMap<TipoResiduo, LinkedList<Residuo>> estadisticaTipo = SerializarEcoTrack.cargarEstadisticaTipo();
                             System.out.println("Seleccione el tipo de residuo: \n1. Orgánico \n2. Plástico \n3. Vidrio \n4. Electrónico \n5. Metal \n6. Papel y/o Cartón");
                             ArrayList<String> tiposResiduo = new ArrayList<>();
@@ -223,6 +245,7 @@ public class App {
                             }
                             break;
                         case 3:
+                            scanner.nextLine(); 
                             TreeMap<String, LinkedList<Residuo>> estadisticaZona = SerializarEcoTrack.cargarEstadisticaZona();
                             System.out.println("Seleccione la zona: ");
                             int contadorZonasLista = 1;
@@ -243,12 +266,13 @@ public class App {
                             }
                             break;
                         case 4:
+                            scanner.nextLine();
                             TreeMap<String, LinkedList<Residuo>> estadisticaPrioridad = SerializarEcoTrack.cargarEstadisticaPrioridad();
                             System.out.println("Seleccione la prioridad ambiental (1-5): ");
                             String prioridadSeleccionada = scanner.nextLine().trim();
-                            LinkedList<Residuo> listaPorPrioridad = estadisticaPrioridad.get("Nivel-"+prioridadSeleccionada);
-                            System.out.println("Estadística por prioridad ambiental - " + prioridadSeleccionada + ":");
-                            int countPrioridad = 1;
+                            LinkedList<Residuo> listaPorPrioridad = estadisticaPrioridad.get("Nivel-" + prioridadSeleccionada);
+                            System.out.println("Estadística por prioridad ambiental nivel :" + prioridadSeleccionada);
+                            int countPrioridad = 1;             
                             iterator = listaPorPrioridad.iterator();
                             while(iterator.hasNext()) {
                                 Residuo r = iterator.next();
@@ -264,34 +288,15 @@ public class App {
                 case 0:
                     System.out.println("Saliendo...");
                     break;
-
                 default:
-                    System.out.println("Opción inválida");
+                    System.out.println("Opción inválida. Intente de nuevo.");
+                    break;
+                
             }
+            scanner.nextLine();
 
         } while (opcion != 0);
 
         scanner.close();
 }
-
-    
-        private static CircularDoubleLinkedList<Residuo> crearListaResiduos(String codigoZona, int cantidad, int baseId, Random random) {
-            if (cantidad <= 0) {
-                throw new IllegalArgumentException("Cantidad debe ser positiva.");
-            }
-
-            CircularDoubleLinkedList<Residuo> lista = new CircularDoubleLinkedList<>();
-            TipoResiduo[] tipos = TipoResiduo.values();
-
-            for (int i = 1; i <= cantidad; i++) {
-                TipoResiduo tipo = tipos[random.nextInt(tipos.length)];
-                double peso = Math.round((0.05 + (random.nextDouble() * 4.95)) * 100.0) / 100.0;
-                int prioridadAmbiental = 1 + random.nextInt(5);
-                String id = "R-" + codigoZona + "-" + (baseId + i);
-                String nombre = "Residuo-" + i + "-" + tipo.getNombre();
-
-                lista.addLast(new Residuo(id, nombre, tipo, peso, codigoZona, prioridadAmbiental));
-            }
-            return lista;
-        }
 }

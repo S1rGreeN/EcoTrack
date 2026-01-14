@@ -234,7 +234,7 @@ public class SerializarEcoTrack {
         File[] archivos = carpeta.listFiles((d, n) -> n.endsWith(".ser"));
 
         if (archivos == null) return mapa;
-
+        int nivel = 1;
         for (File f : archivos) {
             try (ObjectInputStream ois =
                          new ObjectInputStream(new FileInputStream(f))) {
