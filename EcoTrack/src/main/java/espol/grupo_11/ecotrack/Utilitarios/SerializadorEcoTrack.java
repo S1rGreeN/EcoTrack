@@ -5,6 +5,9 @@ import espol.grupo_11.ecotrack.Modelo.Zona;
 import espol.grupo_11.ecotrack.Modelo.Residuo.TipoResiduo;
 
 import java.io.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SerializadorEcoTrack {
 
@@ -70,4 +73,93 @@ public class SerializadorEcoTrack {
             System.err.println("Error serializando: " + ruta);
         }
     }
+
+    public static Zona cargarZona(String nombreZona) {
+        File archivo = new File(
+            INFO_ZONAS + File.separator + nombreZona + ".ser"
+        );
+
+        if (!archivo.exists()) return null;
+
+        try (ObjectInputStream ois =
+                new ObjectInputStream(new FileInputStream(archivo))) {
+
+            return (Zona) ois.readObject();
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<Zona> cargarTodasLasZonas() {
+        List<Zona> zonas = new ArrayList<>();
+        File carpeta = new File(INFO_ZONAS);
+
+        if (!carpeta.exists()) return zonas;
+
+        File[] archivos = carpeta.listFiles((dir, name) -> name.endsWith(".ser"));
+        if (archivos == null) return zonas;
+
+        for (File f : archivos) {
+            try (ObjectInputStream ois =
+                    new ObjectInputStream(new FileInputStream(f))) {
+
+                Zona z = (Zona) ois.readObject();
+                zonas.addLast(z);
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return zonas;
+    }
+
+    public static PriorityQueue<Residuo> cargarPorPeso() {
+        Comparator<Residuo> compPeso = new Comparator<Residuo>() {
+            @Override
+            public int compare(Residuo r1, Residuo r2) {
+                return Double.compare(r2.getPeso(), r1.getPeso());
+            }
+        };
+        File archivo = new File(INFO_ZONAS + "/peso/residuos.ser");
+        if (!archivo.exists()) return new PriorityQueue<>(compPeso);
+
+        try (ObjectInputStream ois =
+                new ObjectInputStream(new FileInputStream(archivo))) {
+
+            return (PriorityQueue<Residuo>) ois.readObject();
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new PriorityQueue<>(compPeso);
+        }
+    }
+
+    public static TreeMap<String, List<Residuo>> cargarPorTipo() {
+        TreeMap<String, List<Residuo>> mapa = new TreeMap<>();
+        File carpeta = new File(EST + "/tipo");
+
+        if (!carpeta.exists()) return mapa;
+
+        File[] archivos = carpeta.listFiles((d, n) -> n.endsWith(".ser"));
+        if (archivos == null) return mapa;
+
+        for (File f : archivos) {
+            String tipo = f.getName().replace(".ser", "");
+            try (ObjectInputStream ois =
+                    new ObjectInputStream(new FileInputStream(f))) {
+
+                List<Residuo> lista = (List<Residuo>) ois.readObject();
+                mapa.put(tipo, lista);
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return mapa;
+    }
+
+
+
 }
