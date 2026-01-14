@@ -18,6 +18,14 @@ public class Residuo implements Serializable {
         }
         public String getNombre() { return nombre; }
         public int getValor() { return valor; }
+        public static TipoResiduo fromValor(int valor) {
+            for (TipoResiduo tipo : TipoResiduo.values()) {
+                if (tipo.getValor() == valor) {
+                    return tipo;
+                }
+            }
+            return null; // o lanzar una excepción si el valor no es válido
+        }
     }
     private String id;
     private String nombre;

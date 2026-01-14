@@ -9,7 +9,7 @@ import java.util.Deque;
 import java.util.Random;
 import java.util.Comparator;
 import espol.grupo_11.ecotrack.Utilitarios.PriorityQueue;
-import espol.grupo_11.ecotrack.Utilitarios.SerializadorEcoTrack;
+import espol.grupo_11.ecotrack.Utilitarios.SerializarEcoTrack;
 import espol.grupo_11.ecotrack.Controlador.ControladorCentroRecoleccion;
 import espol.grupo_11.ecotrack.Modelo.CentroRecoleccion;
 import espol.grupo_11.ecotrack.Modelo.Residuo;

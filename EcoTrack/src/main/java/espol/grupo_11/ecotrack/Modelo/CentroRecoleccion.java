@@ -1,5 +1,6 @@
 package espol.grupo_11.ecotrack.Modelo;
 
+import java.io.*;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Deque;
@@ -13,6 +14,9 @@ import espol.grupo_11.ecotrack.Utilitarios.LinkedList;
 
 public class CentroRecoleccion implements Serializable {
     private static final long serialVersionUID = 1L;
+    private static final String CARPETA_ZONAS = "Informacion Zonas";
+    private static final String CARPETA_ESTADISTICAS = "estadisticas";
+
     private Deque<Residuo> pilaResiduos;
 
     private PriorityQueue<Zona> zonasUrbanas;

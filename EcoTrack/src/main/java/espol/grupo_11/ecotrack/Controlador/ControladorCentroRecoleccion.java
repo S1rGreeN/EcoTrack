@@ -31,7 +31,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
         //Codigo heavy
         Iterator<Zona> it= centroRecoleccion.getZonasUrbanas().iterator();
         try{
-            Thread.sleep(5000);
+            Thread.sleep(50);
         } catch(InterruptedException e){
             e.printStackTrace();
         }
@@ -48,7 +48,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                 while(contador<20){
                     contador++;
                     Residuo copiaResiduo  = zonaActual.removeFirstListaResiduos();
-                    SerializadorEcoTrack.guardarZona(zonaActual);
+                    SerializarEcoTrack.guardarZona(zonaActual);
                     if(copiaResiduo != null){
                         centroRecoleccion.addPilaResiduos(copiaResiduo);
                         centroRecoleccion.addColaResiduos(copiaResiduo);
@@ -74,7 +74,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                 while(contador<20){
                     contador++;
                     Residuo copiaResiduo  = zonaActual.removeFirstListaResiduos();
-                    SerializadorEcoTrack.guardarZona(zonaActual);
+                    SerializarEcoTrack.guardarZona(zonaActual);
                     if(copiaResiduo != null){
                         centroRecoleccion.addPilaResiduos(copiaResiduo);
                         centroRecoleccion.addColaResiduos(copiaResiduo);
@@ -86,7 +86,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                 } 
                 //zonaActual = it.next();
                 try{
-                    Thread.sleep(2000);
+                    Thread.sleep(20);
                 } catch(InterruptedException e){
                     System.out.println("Error en el hilo de recoleccion");
                 }
@@ -185,21 +185,22 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                 mapaPorPrioridad.put(clavePrioridad, pilaPorPrioridad);
             }
             pilaPorPrioridad.addFirst(residuo);
-            SerializadorEcoTrack.guardarPorPeso(
+            SerializarEcoTrack.guardarEstadisticaPeso(
                 centroRecoleccion.getColaResiduosRecolectadosPesos()
             );
 
-            SerializadorEcoTrack.guardarPorTipo(
+            SerializarEcoTrack.guardarEstadisticaTipo(
                 centroRecoleccion.getMapaListaResiduosPorTipo()
             );
 
-            SerializadorEcoTrack.guardarPorZona(
+            SerializarEcoTrack.guardarEstadisticaZona(
                 centroRecoleccion.getMapaListaResiduosPorZona()
             );
 
-            SerializadorEcoTrack.guardarPorPrioridad(
+            SerializarEcoTrack.guardarEstadisticaPrioridad(
                 centroRecoleccion.getMapaListaResiduosPorPrioridadAmbiental()
             );
+
 
         }
 
@@ -243,7 +244,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
 
         // Registrar residuo generado para la sección central
         centroRecoleccion.addResiduoGenerado(nuevo);
-        SerializadorEcoTrack.guardarZona(zonaEncontrada);
+        SerializarEcoTrack.guardarZona(zonaEncontrada);
         return true;
     }
 
