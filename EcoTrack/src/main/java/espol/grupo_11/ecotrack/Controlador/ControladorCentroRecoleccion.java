@@ -7,17 +7,14 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Deque;
 import java.util.Iterator;
-import espol.grupo_11.ecotrack.Utilitarios.PriorityQueue;
-import espol.grupo_11.ecotrack.Utilitarios.TreeMap;
 
-import espol.grupo_11.ecotrack.Utilitarios.LinkedList;
+import espol.grupo_11.ecotrack.Utilitarios.*;
 
 
 
 public class ControladorCentroRecoleccion implements Serializable, Runnable  {
     private static final long serialVersionUID = 1L;
     private CentroRecoleccion centroRecoleccion;
-
     public ControladorCentroRecoleccion(CentroRecoleccion centroRecoleccion){
         this.centroRecoleccion = centroRecoleccion;
     }
@@ -51,6 +48,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                 while(contador<20){
                     contador++;
                     Residuo copiaResiduo  = zonaActual.removeFirstListaResiduos();
+                    SerializadorEcoTrack.guardarZona(zonaActual);
                     if(copiaResiduo != null){
                         centroRecoleccion.addPilaResiduos(copiaResiduo);
                         centroRecoleccion.addColaResiduos(copiaResiduo);
@@ -76,6 +74,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                 while(contador<20){
                     contador++;
                     Residuo copiaResiduo  = zonaActual.removeFirstListaResiduos();
+                    SerializadorEcoTrack.guardarZona(zonaActual);
                     if(copiaResiduo != null){
                         centroRecoleccion.addPilaResiduos(copiaResiduo);
                         centroRecoleccion.addColaResiduos(copiaResiduo);
@@ -160,14 +159,14 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
             pilaPorTipo.addFirst(residuo);
 
             // 2) Por zona
-            String claveZona = residuo.getZona();
-            if (claveZona == null || claveZona.isBlank()) {
-                claveZona = "SIN_ZONA";
+            String nombreZona = centroRecoleccion.getNombreZona(residuo.getZona());
+            if (nombreZona == null || nombreZona.isBlank()) {
+                nombreZona = "SIN_ZONA";
             }
-            LinkedList<Residuo> pilaPorZona = mapaPorZona.get(claveZona);
+            LinkedList<Residuo> pilaPorZona = mapaPorZona.get(nombreZona);
             if (pilaPorZona == null) {
                 pilaPorZona = new LinkedList<Residuo>();
-                mapaPorZona.put(claveZona, pilaPorZona);
+                mapaPorZona.put(nombreZona, pilaPorZona);
             }
             pilaPorZona.addFirst(residuo);
 
@@ -186,6 +185,22 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                 mapaPorPrioridad.put(clavePrioridad, pilaPorPrioridad);
             }
             pilaPorPrioridad.addFirst(residuo);
+            SerializadorEcoTrack.guardarPorPeso(
+                centroRecoleccion.getColaResiduosRecolectadosPesos()
+            );
+
+            SerializadorEcoTrack.guardarPorTipo(
+                centroRecoleccion.getMapaListaResiduosPorTipo()
+            );
+
+            SerializadorEcoTrack.guardarPorZona(
+                centroRecoleccion.getMapaListaResiduosPorZona()
+            );
+
+            SerializadorEcoTrack.guardarPorPrioridad(
+                centroRecoleccion.getMapaListaResiduosPorPrioridadAmbiental()
+            );
+
         }
 
         return procesado;
@@ -228,7 +243,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
 
         // Registrar residuo generado para la sección central
         centroRecoleccion.addResiduoGenerado(nuevo);
-
+        SerializadorEcoTrack.guardarZona(zonaEncontrada);
         return true;
     }
 

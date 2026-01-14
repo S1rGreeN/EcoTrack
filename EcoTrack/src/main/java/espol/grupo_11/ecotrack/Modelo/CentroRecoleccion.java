@@ -80,6 +80,14 @@ public class CentroRecoleccion implements Serializable {
             System.out.println("Zona " + z.getCodigo() + " | residuosEnCalle=" + pendientes + " | recolectados=" + recolectados + " | score=" + score);
         }
     }
+    public String getNombreZona(String codigoZona){
+        for(Zona zona : zonasUrbanas){
+            if(zona.getCodigo().equals(codigoZona)){
+                return zona.getNombre();
+            }
+        }
+        return null;
+    }
 
 }
 

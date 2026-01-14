@@ -39,6 +39,7 @@ public class Zona implements Serializable{
         this.ultimaRecoleccion = ultimaRecoleccion;
     }
 
+
    
     public void actualizarRecoleccion(){
         this.cantidadResiduosRecolectados ++;
