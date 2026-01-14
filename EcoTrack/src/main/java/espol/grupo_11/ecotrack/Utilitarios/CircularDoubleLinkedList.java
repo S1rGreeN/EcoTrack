@@ -1,7 +1,10 @@
 package espol.grupo_11.ecotrack.Utilitarios;
+import java.io.Serializable;
 import java.util.Iterator;
 
-public class CircularDoubleLinkedList<T> implements Iterable<T> {
+public class CircularDoubleLinkedList<T> implements Iterable<T>, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private DoublyNodeList<T> head; 
     public CircularDoubleLinkedList(){
         this.head = null;

@@ -6,9 +6,9 @@ package espol.grupo_11.ecotrack;
 import java.time.LocalDateTime;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Comparator;
+import espol.grupo_11.ecotrack.Utilitarios.PriorityQueue;
 
 import espol.grupo_11.ecotrack.Controlador.ControladorCentroRecoleccion;
 import espol.grupo_11.ecotrack.Modelo.CentroRecoleccion;
@@ -17,6 +17,7 @@ import espol.grupo_11.ecotrack.Modelo.Residuo.TipoResiduo;
 import espol.grupo_11.ecotrack.Modelo.Zona;
 import espol.grupo_11.ecotrack.Utilitarios.CircularDoubleLinkedList;
 import espol.grupo_11.ecotrack.Utilitarios.LinkedList; 
+import espol.grupo_11.ecotrack.Utilitarios.ArrayList;
 
 /**
  *
@@ -31,6 +32,13 @@ public class EcoTrack {
                 return (z1.getCantidadResiduosRecolectados()-z1.getListaResiduos().size()) - (z2.getCantidadResiduosRecolectados()-z2.getListaResiduos().size());
             }
         });
+        Comparator<Residuo> compPeso = new Comparator<Residuo>() {
+            @Override
+            public int compare(Residuo r1, Residuo r2) {
+                return Double.compare(r2.getPeso(), r1.getPeso());
+            }
+        };
+
 
         String[] nombres = new String[] {"Alborada","Bastión Popular","Cerro Colorado","El Fortín","El Guasmo","La Alborada","La Merced","Los Esteros","Los Samanes","Miraflores","Octava","Samborondón","San Eduardo","San Francisco","Tarqui","Urdesa"};
         Random random = new Random(12345);
@@ -42,9 +50,9 @@ public class EcoTrack {
             CircularDoubleLinkedList<Residuo> lista = crearListaResiduos(codigo, cantidad, idx * 1000, random);
             Zona z = new Zona(lista, nombreZona, codigo);
             if (idx <= 8) {
-                z.setUltimaRecoleccion(LocalDateTime.of(2026, 1, 9, 8, 0));
+                z.setUltimaRecoleccion(LocalDateTime.of(2026, 1, 10, 14, 30));
             } else {
-                z.setUltimaRecoleccion(LocalDateTime.of(2026, 1, 10, 8, 0));
+                z.setUltimaRecoleccion(LocalDateTime.of(2026, 1, 9, 14, 30));
             }
             zonasUrbanas.add(z);
             idx++;
@@ -58,9 +66,10 @@ public class EcoTrack {
             java.util.Random rnd = new java.util.Random();
             while (true) {
                 for (int g = 0; g < 2; g++) {
-                    java.util.List<Zona> listaZonas;
+                    LinkedList<Zona> listaZonas;
                     synchronized (centro.getZonasUrbanas()) {
-                        listaZonas = new java.util.ArrayList<>(centro.getZonasUrbanas());
+                        listaZonas = new LinkedList<Zona>();
+                        listaZonas.addAll(centro.getZonasUrbanas());
                     }
                     if (listaZonas.isEmpty()) break;
                     Zona zonaRandom = listaZonas.get(rnd.nextInt(listaZonas.size()));
@@ -93,6 +102,7 @@ public class EcoTrack {
             System.out.println("2. Generar Residuo");
             System.out.println("3. Ver informacion de las zonas");
             System.out.println("4. Ver estadisticas");
+
             System.out.println("5. Residuos generados");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
@@ -170,11 +180,11 @@ public class EcoTrack {
                 case 3: {
                     PriorityQueue<Zona> copia = new PriorityQueue<>(zonasUrbanas.comparator());
                     copia.addAll(zonasUrbanas);
-                    java.util.List<Zona> listaOrden = new java.util.ArrayList<>();
+                    ArrayList<Zona> listaOrden = new ArrayList<>();
                     int indiceZona = 1;
                     while (!copia.isEmpty()) {
                         Zona z = copia.poll();
-                        listaOrden.add(z);
+                        listaOrden.addLast(z);
                         System.out.println(indiceZona + ". " + z.getNombre() + " (" + z.getCodigo() + ") | residuosEnCalle=" + z.getListaResiduos().size() + " | recolectados=" + z.getCantidadResiduosRecolectados());
                         indiceZona++;
                     }
@@ -245,7 +255,8 @@ public class EcoTrack {
                     String estadisticaTipo = scanner.nextLine().trim().toLowerCase();
                     switch (estadisticaTipo) {
                         case "peso": {
-                            java.util.PriorityQueue<Residuo> copiaCola = new java.util.PriorityQueue<>(centro.getColaResiduosRecolectadosPesos());
+                            PriorityQueue<Residuo> copiaCola = new PriorityQueue<>(centro.getColaResiduosRecolectadosPesos(), compPeso);
+
                             if (copiaCola == null || copiaCola.isEmpty()) {
                                 System.out.println("No hay residuos procesados por peso.");
                                 break;
@@ -356,7 +367,7 @@ public class EcoTrack {
         }
         return lista;
     }
-
+/* 
     private static void imprimirZonasPorPrioridad(PriorityQueue<Zona> zonasUrbanas) {
         PriorityQueue<Zona> copia = new PriorityQueue<>(zonasUrbanas.comparator());
         copia.addAll(zonasUrbanas);
@@ -368,6 +379,6 @@ public class EcoTrack {
             int score = recolectados - pendientes;
             System.out.println("Zona " + z.getCodigo() + " | residuosEnCalle=" + pendientes + " | recolectados=" + recolectados + " | score=" + score);
         }
-    }
+    }*/
 }
 

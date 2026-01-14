@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 
 public class Zona implements Serializable{
+    private static final long serialVersionUID = 1L;
     private CircularDoubleLinkedList<Residuo> listaResiduos;
     private String nombre;
     private String codigo; //Definir si usamos el codigo postal de la parroquia o el codigo postal de cada zona de guayaquil.

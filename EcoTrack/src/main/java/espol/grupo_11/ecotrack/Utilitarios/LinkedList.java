@@ -1,7 +1,9 @@
 package espol.grupo_11.ecotrack.Utilitarios;
+import java.io.Serializable;
 import java.util.Iterator;
 
-public class LinkedList<E> implements List<E>{
+public class LinkedList<E> implements List<E>, Serializable{
+    private static final long serialVersionUID = 1L;
     private NodeList<E> header;
     private NodeList<E> last;
     //private int size = 0;
@@ -33,6 +35,9 @@ public class LinkedList<E> implements List<E>{
             NodeList<E> newNode=new NodeList<>(e); // constructor crea un nodo aislado
             newNode.setNext(header); //El siguiente de ese nuevo nodo es Header
             this.setHeader(newNode); //actualizar el header de la lista
+            if (last == null) { // si estaba vacía, actualizar last también
+                last = newNode;
+            }
             return true;
         } else {
             return false;
@@ -56,6 +61,18 @@ public class LinkedList<E> implements List<E>{
         } else {
             return false;
         }  
+    }
+
+    public boolean addAll(Iterable<? extends E> other) {
+        if (other == null) return false;
+        boolean changed = false;
+        for (E e : other) {
+            if (e != null) {
+                addLast(e);
+                changed = true;
+            }
+        }
+        return changed;
     }
     
     private NodeList<E> getPrevious(NodeList<E> node){
@@ -132,32 +149,62 @@ public class LinkedList<E> implements List<E>{
 
     @Override
     public boolean isEmpty() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return header == null;
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        header = null;
+        last = null;
     }
 
     @Override
     public void add(int index, E element) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (element == null) throw new IllegalArgumentException("element must not be null");
+        int n = size();
+        if (index < 0 || index > n) throw new IndexOutOfBoundsException("Index: " + index);
+        if (index == 0) { addFirst(element); return; }
+        if (index == n) { addLast(element); return; }
+        NodeList<E> prev = header;
+        for (int i = 0; i < index - 1; i++) prev = prev.getNext();
+        NodeList<E> newNode = new NodeList<>(element);
+        newNode.setNext(prev.getNext());
+        prev.setNext(newNode);
     }
 
     @Override
     public E remove(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        int n = size();
+        if (index < 0 || index >= n) throw new IndexOutOfBoundsException("Index: " + index);
+        if (index == 0) return removeFirst();
+        NodeList<E> prev = header;
+        for (int i = 0; i < index - 1; i++) prev = prev.getNext();
+        NodeList<E> toRemove = prev.getNext();
+        E value = toRemove.getContent();
+        prev.setNext(toRemove.getNext());
+        if (toRemove == last) last = prev;
+        return value;
     }
 
     @Override
     public E get(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        int n = size();
+        if (index < 0 || index >= n) throw new IndexOutOfBoundsException("Index: " + index);
+        NodeList<E> cur = header;
+        for (int i = 0; i < index; i++) cur = cur.getNext();
+        return cur.getContent();
     }
 
     @Override
     public E set(int index, E element) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (element == null) throw new IllegalArgumentException("element must not be null");
+        int n = size();
+        if (index < 0 || index >= n) throw new IndexOutOfBoundsException("Index: " + index);
+        NodeList<E> cur = header;
+        for (int i = 0; i < index; i++) cur = cur.getNext();
+        E old = cur.getContent();
+        cur.setContent(element);
+        return old;
     }
     
     public String toString() {

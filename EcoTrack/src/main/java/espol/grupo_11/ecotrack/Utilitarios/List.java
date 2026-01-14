@@ -1,6 +1,8 @@
 package espol.grupo_11.ecotrack.Utilitarios;
 
-public interface List<E> extends Iterable<E>{
+import java.io.Serializable;
+
+public interface List<E> extends Iterable<E>, Serializable{
 
     public boolean addFirst(E e); //Inserta el elemento e al inicio
             

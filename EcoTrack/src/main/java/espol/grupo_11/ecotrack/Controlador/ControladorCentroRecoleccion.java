@@ -7,13 +7,15 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.TreeMap;
+import espol.grupo_11.ecotrack.Utilitarios.PriorityQueue;
+import espol.grupo_11.ecotrack.Utilitarios.TreeMap;
 
 import espol.grupo_11.ecotrack.Utilitarios.LinkedList;
 
 
 
 public class ControladorCentroRecoleccion implements Serializable, Runnable  {
+    private static final long serialVersionUID = 1L;
     private CentroRecoleccion centroRecoleccion;
 
     public ControladorCentroRecoleccion(CentroRecoleccion centroRecoleccion){
@@ -37,9 +39,9 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
             e.printStackTrace();
         }
         
-        int contadorIteracionPQ = centroRecoleccion.getZonasUrbanas().size();
+        int contadorIteracionPQ = (centroRecoleccion.getZonasUrbanas().size())/2;
         
-        while(it.hasNext() && contadorIteracionPQ>=0){
+        while(it.hasNext() && contadorIteracionPQ>0){
             Zona zonaActual = it.next();
             if(zonaActual.getUltimaRecoleccion() == null){
                 --contadorIteracionPQ;
@@ -65,8 +67,8 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                 } catch(InterruptedException e){
                     System.out.println("Error en el hilo de recoleccion");
                 }
-            } else if(zonaActual.getUltimaRecoleccion().plusDays(2).isEqual(LocalDateTime.now()) 
-                || zonaActual.getUltimaRecoleccion().plusDays(2).isBefore(LocalDateTime.now())){
+            } else if((zonaActual.getUltimaRecoleccion().plusDays(2).isEqual(LocalDateTime.now()) 
+                || zonaActual.getUltimaRecoleccion().plusDays(2).isBefore(LocalDateTime.now())) && contadorIteracionPQ>0){
                     --contadorIteracionPQ;
                 int contador = 0;
                 System.out.println("Recoleccion en zona: "+zonaActual.getCodigo());
@@ -110,7 +112,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
             System.out.println("Tipo "+ tipo.getNombre() + " Tamaño lista: "+ centroRecoleccion.getMapaListaResiduosPorTipo().get(tipo).size());
             contadorTipo=contadorTipo+ centroRecoleccion.getMapaListaResiduosPorTipo().get(tipo).size();
         }
-        System.out.println("Tama,ño total por tipo: "+ contadorTipo);
+        System.out.println("Tamaño total por tipo: "+ contadorTipo);
         int contadorZona =0;
         for(String zona: centroRecoleccion.getMapaListaResiduosPorZona().keySet()){
             System.out.println("Zona: "+ zona + " Tamaño lista: "+ centroRecoleccion.getMapaListaResiduosPorZona().get(zona).size());
@@ -130,6 +132,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
         hiloRecoleccion.start();
     }
 
+    
 
     public boolean procesarResiduos(){
         Deque<Residuo> pilaResiduos = centroRecoleccion.getPilaResiduos();
@@ -198,7 +201,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
 
         Residuo nuevo = new Residuo(id, nombre, tipo, peso, zona, prioridad);
 
-        java.util.PriorityQueue<Zona> pq = centroRecoleccion.getZonasUrbanas();
+        PriorityQueue<Zona> pq = centroRecoleccion.getZonasUrbanas();
         if (pq == null || pq.isEmpty()) {
             return false;
         }

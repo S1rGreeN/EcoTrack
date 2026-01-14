@@ -2,7 +2,8 @@ package espol.grupo_11.ecotrack.Modelo;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 public class Residuo implements Serializable {
-    public enum TipoResiduo {
+    private static final long serialVersionUID = 1L;
+    public enum TipoResiduo { 
         ORGANICO("Orgánico",1),
         PLASTICO("Plástico",2),
         VIDRIO("Vidrio",3),

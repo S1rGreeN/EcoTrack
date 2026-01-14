@@ -3,8 +3,8 @@ package espol.grupo_11.ecotrack.Modelo;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Deque;
-import java.util.PriorityQueue;
-import java.util.TreeMap;
+import espol.grupo_11.ecotrack.Utilitarios.PriorityQueue;
+import espol.grupo_11.ecotrack.Utilitarios.TreeMap;
 
 import espol.grupo_11.ecotrack.Modelo.Residuo.TipoResiduo;
 import espol.grupo_11.ecotrack.Utilitarios.LinkedList;
@@ -12,6 +12,7 @@ import espol.grupo_11.ecotrack.Utilitarios.LinkedList;
 
 
 public class CentroRecoleccion implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Deque<Residuo> pilaResiduos;
 
     private PriorityQueue<Zona> zonasUrbanas;
@@ -23,7 +24,7 @@ public class CentroRecoleccion implements Serializable {
     public CentroRecoleccion(PriorityQueue<Zona> zonasUrbanas,Deque<Residuo> pilaResiduos){
         this.zonasUrbanas = zonasUrbanas;
         this.pilaResiduos = pilaResiduos;  
-        this.colaResiduosRecolectadosPesos = new PriorityQueue<>(new Comparator<Residuo>(){
+        this.colaResiduosRecolectadosPesos = new PriorityQueue<Residuo>(new Comparator<Residuo>(){
             @Override
             public int compare(Residuo r1, Residuo r2){
                 return Double.compare(r2.getPeso(), r1.getPeso());
@@ -46,7 +47,7 @@ public class CentroRecoleccion implements Serializable {
     public PriorityQueue<Zona> getZonasUrbanas(){return zonasUrbanas;}
     public void addColaResiduos(Residuo residuo){this.colaResiduosRecolectadosPesos.add(residuo);}
 
-    public java.util.PriorityQueue<Residuo> getColaResiduosRecolectadosPesos() {
+    public PriorityQueue<Residuo> getColaResiduosRecolectadosPesos() {
         return colaResiduosRecolectadosPesos;
     }
 

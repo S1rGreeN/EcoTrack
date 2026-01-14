@@ -1,6 +1,10 @@
 package espol.grupo_11.ecotrack.Utilitarios;
 
-class NodeList<E> {
+import java.io.Serializable;
+
+class NodeList<E> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private E content;
     private NodeList<E> next;
 

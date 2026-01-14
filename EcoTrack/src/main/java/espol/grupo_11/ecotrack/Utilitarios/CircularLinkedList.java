@@ -1,9 +1,11 @@
 package espol.grupo_11.ecotrack.Utilitarios;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
-public class CircularLinkedList<E> implements List<E> {
-    
+public class CircularLinkedList<E> implements List<E>, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private CircularNodeList<E> last;
     
     public CircularNodeList<E> getLast(){
