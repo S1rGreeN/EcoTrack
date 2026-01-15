@@ -168,15 +168,181 @@ public class EcoTrack {
                     controlador.iniciarRecoleccionCarrito();
                     SerializarEcoTrack.guardarEstadisticas(centro);
                     break;
-
+                case 2:
+                    System.out.println("Zonas disponibles:");
+                    int listaIndices = 1;
+                    for (Zona z : zonasUrbanas) {
+                        System.out.println(listaIndices + ". " + z.getNombre() + " (" + z.getCodigo() + ")");
+                        listaIndices++;
+                    }
+                    System.out.print("Seleccione zona (número o nombre): ");
+                    String seleccion = scanner.nextLine().trim();
+                    Zona zonaSeleccionada = null;
+                    try {
+                        int selIdx = Integer.parseInt(seleccion);
+                        if (selIdx >= 1 && selIdx < listaIndices) {
+                            int i = 1;
+                            for (Zona z : zonasUrbanas) {
+                                if (i == selIdx) {
+                                    zonaSeleccionada = z;
+                                    break;
+                                }
+                                i++;
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        for (Zona z : zonasUrbanas) {
+                            if (z.getNombre().equalsIgnoreCase(seleccion)
+                                    || z.getNombre().toLowerCase().contains(seleccion.toLowerCase())) {
+                                zonaSeleccionada = z;
+                                break;
+                            }
+                        }
+                    }
+                    if (zonaSeleccionada == null) {
+                        System.out.println("Zona no encontrada.");
+                        break;
+                    }
+                    String idResiduo = "R-" + zonaSeleccionada.getCodigo() + "-"
+                            + (zonaSeleccionada.getListaResiduos().size() + 1);
+                    System.out.print("Nombre del residuo: ");
+                    String nombreResiduo = scanner.nextLine().trim();
+                    System.out.println("Tipos disponibles:");
+                    TipoResiduo[] tipos = TipoResiduo.values();
+                    for (int i = 0; i < tipos.length; i++) {
+                        System.out.println((i + 1) + ". " + tipos[i].getNombre());
+                    }
+                    System.out.print("Seleccione tipo (número): ");
+                    int indiceTipo = 1;
+                    try {
+                        indiceTipo = Integer.parseInt(scanner.nextLine().trim());
+                    } catch (Exception e) {
+                        indiceTipo = 1;
+                    }
+                    if (indiceTipo < 1 || indiceTipo > tipos.length)
+                        indiceTipo = 1;
+                    TipoResiduo tipoSeleccionado = tipos[indiceTipo - 1];
+                    System.out.print("Peso (kg): ");
+                    double peso = 0.1;
+                    try {
+                        peso = Double.parseDouble(scanner.nextLine().trim());
+                    } catch (Exception e) {
+                        peso = 0.1;
+                    }
+                    System.out.print("Prioridad (1-5): ");
+                    int prioridad = 1;
+                    try {
+                        prioridad = Integer.parseInt(scanner.nextLine().trim());
+                    } catch (Exception e) {
+                        prioridad = 1;
+                    }
+                    boolean agregado = controlador.nuevoResiduo(idResiduo, nombreResiduo, tipoSeleccionado, peso,
+                            zonaSeleccionada.getCodigo(), prioridad);
+                    System.out.println("Residuo agregado a zona " + zonaSeleccionada.getNombre() + " ("
+                            + zonaSeleccionada.getCodigo() + "): " + agregado);
+                    break;
                 case 3:
-                    System.out.print("Seleccione zona (1-" + nombres.length + "): ");
-                    int zidx = Integer.parseInt(scanner.nextLine());
-                    Zona z = SerializarEcoTrack.cargarZona(nombres[zidx - 1]);
+                    scanner.nextLine();
+                    System.out.print("Seleccione zona para ver residuos (número ): ");
+                    int contadorZonas = 1;
+                    for (String zona : nombres) {
+                        System.out.println(contadorZonas + ". " + zona);
+                        contadorZonas++;
+                    }
+                    int seleccionZona = scanner.nextInt();
+                    Zona z = SerializarEcoTrack.cargarZona(nombres[seleccionZona - 1]);
                     if (z != null) {
-                        System.out.println(z);
-                        for (Residuo r : z.getListaResiduos())
-                            System.out.println(r);
+                        System.out.println("\n--- Zona: " + z.getNombre() + " (" + z.getCodigo() + ") ---");
+                        CircularDoubleLinkedList<Residuo> listaResiduos = z.getListaResiduos();
+                        int count = 1;
+                        for (Residuo r : listaResiduos) {
+                            System.out.println(count + ". " + r);
+                            count++;
+                        }
+                    } else {
+                        System.out.println("No se pudo cargar la zona: " + nombres[seleccionZona - 1]);
+                    }
+                    break;
+                case 4:
+                    System.out.print(
+                            "¿Qué estadística desea ver?\nPeso (1) \nTipo (2) \nZona (3) \nPrioridad Ambiental (4) \nSeleccione opción: ");
+                    int estadisticaOpcion = scanner.nextInt();
+                    switch (estadisticaOpcion) {
+                        case 1:
+                            PriorityQueue<Residuo> estadisticaPeso = SerializarEcoTrack.cargarEstadisticaPeso();
+                            System.out.println("Estadística por peso:");
+                            int countPeso = 1;
+                            for (Residuo r : estadisticaPeso) {
+                                System.out.println(countPeso + ". " + r);
+                                countPeso++;
+                            }
+                            break;
+                        case 2:
+                            scanner.nextLine();
+                            TreeMap<TipoResiduo, LinkedList<Residuo>> estadisticaTipo = SerializarEcoTrack
+                                    .cargarEstadisticaTipo();
+                            System.out.println(
+                                    "Seleccione el tipo de residuo: \n1. Orgánico \n2. Plástico \n3. Vidrio \n4. Electrónico \n5. Metal \n6. Papel y/o Cartón");
+                            ArrayList<String> tiposResiduo = new ArrayList<>();
+                            tiposResiduo.addLast("Orgánico");
+                            tiposResiduo.addLast("Plástico");
+                            tiposResiduo.addLast("Vidrio");
+                            tiposResiduo.addLast("Electrónico");
+                            tiposResiduo.addLast("Metal");
+                            tiposResiduo.addLast("Papel y/o Cartón");
+                            int tipoResiduoSeleccionado = scanner.nextInt();
+                            LinkedList<Residuo> listaPorTipo = estadisticaTipo
+                                    .get(TipoResiduo.fromValor(tipoResiduoSeleccionado));
+                            System.out.println(
+                                    "Estadística por tipo - " + tiposResiduo.get(tipoResiduoSeleccionado - 1) + ":");
+                            int countTipo = 1;
+                            Iterator<Residuo> iterator = listaPorTipo.iterator();
+                            while (iterator.hasNext()) {
+                                Residuo r = iterator.next();
+                                System.out.println(countTipo + ". " + r);
+                                countTipo++;
+                            }
+                            break;
+                        case 3:
+                            scanner.nextLine();
+                            TreeMap<String, LinkedList<Residuo>> estadisticaZona = SerializarEcoTrack
+                                    .cargarEstadisticaZona();
+                            System.out.println("Seleccione la zona: ");
+                            int contadorZonasLista = 1;
+                            for (String zona : nombres) {
+                                System.out.println(contadorZonasLista + ". " + zona);
+                                contadorZonasLista++;
+                            }
+                            int zonaSeleccionadaEst = scanner.nextInt();
+                            LinkedList<Residuo> listaPorZona = estadisticaZona.get(nombres[zonaSeleccionadaEst - 1]);
+                            System.out.println("Estadística por zona - " + nombres[zonaSeleccionadaEst - 1] + ":");
+                            int countZona = 1;
+                            iterator = listaPorZona.iterator();
+                            while (iterator.hasNext()) {
+                                Residuo r = iterator.next();
+                                System.out.println(countZona + ". " + r);
+                                countZona++;
+                            }
+                            break;
+                        case 4:
+                            scanner.nextLine();
+                            TreeMap<String, LinkedList<Residuo>> estadisticaPrioridad = SerializarEcoTrack
+                                    .cargarEstadisticaPrioridad();
+                            System.out.println("Seleccione la prioridad ambiental (1-5): ");
+                            String prioridadSeleccionada = scanner.nextLine().trim();
+                            LinkedList<Residuo> listaPorPrioridad = estadisticaPrioridad
+                                    .get("Nivel-" + prioridadSeleccionada);
+                            System.out.println("Estadística por prioridad ambiental nivel :" + prioridadSeleccionada);
+                            int countPrioridad = 1;
+                            iterator = listaPorPrioridad.iterator();
+                            while (iterator.hasNext()) {
+                                Residuo r = iterator.next();
+                                System.out.println(countPrioridad + ". " + r);
+                                countPrioridad++;
+                            }
+                            break;
+                        default:
+                            System.out.println("Opción inválida");
                     }
                     break;
 
