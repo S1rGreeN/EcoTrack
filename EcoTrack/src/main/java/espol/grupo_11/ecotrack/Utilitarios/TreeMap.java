@@ -48,6 +48,9 @@ public class TreeMap<K extends Comparable<? super K>, V> implements Serializable
     public boolean containsKey(K key){ return get(key) != null; } // verifica si existe la clave (tiene valor asociado)
 
     public int size(){ return size; } //retorna el tamaño del arbol
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
     public LinkedList<K> keySet(){ //retorna una lista con las claves del arbol
         LinkedList<K> keys = new LinkedList<>();
