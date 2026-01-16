@@ -50,7 +50,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                     Residuo copiaResiduo  = zonaActual.removeFirstListaResiduos();
                     SerializarEcoTrack.guardarZona(zonaActual);
                     if(copiaResiduo != null){
-                        centroRecoleccion.addPilaResiduos(copiaResiduo);
+                        centroRecoleccion.addArbolResiduos(copiaResiduo);
                         centroRecoleccion.addColaResiduos(copiaResiduo);
                         zonaActual.actualizarRecoleccion();
                         
@@ -76,7 +76,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
                     Residuo copiaResiduo  = zonaActual.removeFirstListaResiduos();
                     SerializarEcoTrack.guardarZona(zonaActual);
                     if(copiaResiduo != null){
-                        centroRecoleccion.addPilaResiduos(copiaResiduo);
+                        centroRecoleccion.addArbolResiduos(copiaResiduo);
                         centroRecoleccion.addColaResiduos(copiaResiduo);
                         zonaActual.actualizarRecoleccion();
                     } else {
@@ -99,10 +99,10 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
             System.out.println(contador + " " + r.toString());
             contador++;
         }*/
-       System.out.println("Tamaño de la pila de residuos antes de procesar: " + centroRecoleccion.getPilaResiduos().size());
+       //System.out.println("Tamaño del árbol de residuos antes de procesar: " + centroRecoleccion.getArbolResiduos());
         boolean validacion = procesarResiduos();
         if(validacion){
-            System.out.println("Tamaño de la pila de residuos luego de procesar: " + centroRecoleccion.getPilaResiduos().size());
+            //System.out.println("Tamaño del árbol de residuos luego de procesar: " + centroRecoleccion.getArbolResiduos().countLeavesRecursive());
         } else {
             System.out.println("No se pudo procesar los residuos del centro de recolección.");
         }
@@ -134,8 +134,8 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
     
 
     public boolean procesarResiduos(){
-        Deque<Residuo> pilaResiduos = centroRecoleccion.getPilaResiduos();
-        if (pilaResiduos == null || pilaResiduos.isEmpty()) {
+        BinaryTree<Residuo> arbolResiduos = centroRecoleccion.getArbolResiduos();
+        if (arbolResiduos == null || arbolResiduos.isEmpty()) {
             return false;
         }
 
@@ -144,7 +144,7 @@ public class ControladorCentroRecoleccion implements Serializable, Runnable  {
         TreeMap<String, LinkedList<Residuo>> mapaPorPrioridad = centroRecoleccion.getMapaListaResiduosPorPrioridadAmbiental();
 
         boolean procesado = false;
-        Iterator<Residuo> it = pilaResiduos.iterator();
+        Iterator<Residuo> it = arbolResiduos.iterator();
         while (it.hasNext()) {
             Residuo residuo = it.next();
             it.remove();
