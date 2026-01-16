@@ -1,89 +1,128 @@
 package espol.grupo_11.ecotrack.Utilitarios;
 
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Stack;
 
-public class BinaryTree<T> {
+public class BinaryTree<T> implements Iterable<T> {
+
     private NodeBinaryTree<T> root;
-    
-    
-    public BinaryTree(){
+    private Comparator<T> comparator;
+
+    // ======================
+    // CONSTRUCTORES
+    // ======================
+
+    public BinaryTree(Comparator<T> comparator) {
         this.root = null;
+        this.comparator = comparator;
     }
-    
-    public BinaryTree(NodeBinaryTree<T> root){
-        this.root = root;
-    }
-    
-    
-    
-    public BinaryTree(T content){
+
+    public BinaryTree(T content, Comparator<T> comparator) {
         this.root = new NodeBinaryTree<>(content);
+        this.comparator = comparator;
     }
-    
-    public boolean isEmpty(){
+
+    public BinaryTree(NodeBinaryTree<T> root, Comparator<T> comparator) {
+        this.root = root;
+        this.comparator = comparator;
+    }
+
+    // ======================
+    // UTILIDADES
+    // ======================
+
+    public boolean isEmpty() {
         return root == null;
     }
-    
-    public NodeBinaryTree<T> getRoot(){
+
+    public NodeBinaryTree<T> getRoot() {
         return root;
     }
-    public void setRoot(NodeBinaryTree<T> root){
+
+    public void setRoot(NodeBinaryTree<T> root) {
         this.root = root;
     }
-    public boolean isLeaf(){
-        if(!this.isEmpty()){
-            return root.getLeft()==null && root.getRight() == null;
+
+    // ======================
+    // AGREGAR (BST con Comparator)
+    // ======================
+    public void agregar(T dato) {
+        if (dato == null) return;
+        if (comparator == null)
+            throw new IllegalStateException("Comparator no definido");
+
+        if (this.isEmpty()) {
+            this.root = new NodeBinaryTree<>(dato);
+            return;
         }
-        return false;
-    }
-    
-    
-    
-    public void inOrden(){
-        if(!this.isEmpty()){
-            if(root.getLeft() != null){
-                root.getLeft().inOrden();
+
+        int cmp = comparator.compare(dato, root.getContent());
+
+        if (cmp < 0) {
+            if (root.getLeft().isEmpty()) {
+                root.setLeft(new BinaryTree<>(dato, comparator));
+            } else {
+                root.getLeft().agregar(dato);
             }
-            System.out.println(this.root.getContent());
-            if(root.getRight()!= null){
-                root.getRight().inOrden();
+        } else {
+            if (root.getRight().isEmpty()) {
+                root.setRight(new BinaryTree<>(dato, comparator));
+            } else {
+                root.getRight().agregar(dato);
             }
-            
         }
-        
-    }
-    
-    
-    
-    public int countLeavesRecursive() {
-    // Caso Base: arbol vacio
-    if (this.isEmpty()) {
-        return 0;
     }
 
-    //los sub-árboles izquierdo y derecho
-    BinaryTree<T> leftTree = this.root.getLeft();
-    BinaryTree<T> rightTree = this.root.getRight();
-
-    //caso Base 2: es hoja.
-    //  una hoja ocurre si ambos sub-árboles son nulos O están vacíos.
-    boolean isLeftEmpty = (leftTree == null || leftTree.isEmpty());
-    boolean isRightEmpty = (rightTree == null || rightTree.isEmpty());
-
-    if (isLeftEmpty && isRightEmpty) {
-        return 1;
+    // ======================
+    // RECORRIDO INORDEN
+    // ======================
+    public void inOrden() {
+        if (!this.isEmpty()) {
+            root.getLeft().inOrden();
+            System.out.println(root.getContent());
+            root.getRight().inOrden();
+        }
     }
 
-    //sumar hojas de los hijos
-    int count = 0;
-    if (!isLeftEmpty) {
-        count += leftTree.countLeavesRecursive();
+    // ======================
+    // ITERABLE INORDEN
+    // ======================
+    @Override
+    public Iterator<T> iterator() {
+        return new InOrderIterator();
     }
-    if (!isRightEmpty) {
-        count += rightTree.countLeavesRecursive();
+
+    private class InOrderIterator implements Iterator<T> {
+
+        private Stack<NodeBinaryTree<T>> stack = new Stack<>();
+
+        public InOrderIterator() {
+            pushLeft(root);
+        }
+
+        private void pushLeft(NodeBinaryTree<T> node) {
+            while (node != null && !node.getLeft().isEmpty()) {
+                stack.push(node);
+                node = node.getLeft().getRoot();
+            }
+            if (node != null) stack.push(node);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !stack.isEmpty();
+        }
+
+        @Override
+        public T next() {
+            NodeBinaryTree<T> current = stack.pop();
+            T result = current.getContent();
+
+            if (!current.getRight().isEmpty()) {
+                pushLeft(current.getRight().getRoot());
+            }
+            return result;
+        }
     }
-    
-    return count;
-    }
-    
 }
-

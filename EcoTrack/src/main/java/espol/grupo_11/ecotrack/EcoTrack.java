@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Comparator;
 
+
 import espol.grupo_11.ecotrack.Controlador.ControladorCentroRecoleccion;
 import espol.grupo_11.ecotrack.Modelo.CentroRecoleccion;
 import espol.grupo_11.ecotrack.Modelo.Residuo;
@@ -90,8 +91,13 @@ public class EcoTrack {
             idx++;
         }
 
-        Deque<Residuo> pilaResiduos = new ArrayDeque<>();
-        CentroRecoleccion centro = new CentroRecoleccion(zonasUrbanas, pilaResiduos);
+        BinaryTree<Residuo> arbolResiduos = new BinaryTree<>(new Comparator<Residuo>() {
+                    @Override
+                    public int compare(Residuo residuo1, Residuo residuo2) {
+                        return (int)(residuo1.getPeso()- residuo2.getPeso());
+                    }
+                });
+        CentroRecoleccion centro = new CentroRecoleccion(zonasUrbanas, arbolResiduos);
         ControladorCentroRecoleccion controlador =
                 new ControladorCentroRecoleccion(centro);
 

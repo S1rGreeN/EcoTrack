@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.Deque;
 import espol.grupo_11.ecotrack.Utilitarios.PriorityQueue;
 import espol.grupo_11.ecotrack.Utilitarios.TreeMap;
-
+import espol.grupo_11.ecotrack.Utilitarios.BinaryTree;
 import espol.grupo_11.ecotrack.Modelo.Residuo.TipoResiduo;
 import espol.grupo_11.ecotrack.Utilitarios.LinkedList;
 
@@ -17,7 +17,7 @@ public class CentroRecoleccion implements Serializable {
     private static final String CARPETA_ZONAS = "Informacion Zonas";
     private static final String CARPETA_ESTADISTICAS = "estadisticas";
 
-    private Deque<Residuo> pilaResiduos;
+    private BinaryTree<Residuo> arbolResiduos;
 
     private PriorityQueue<Zona> zonasUrbanas;
     private PriorityQueue<Residuo> colaResiduosRecolectadosPesos;
@@ -25,9 +25,9 @@ public class CentroRecoleccion implements Serializable {
     private TreeMap<String, LinkedList<Residuo>> mapaListaResiduosPorZona;
     private TreeMap<String, LinkedList<Residuo>> mapaListaResiduosPorPrioridadAmbiental;
     private java.util.List<Residuo> residuosGenerados;
-    public CentroRecoleccion(PriorityQueue<Zona> zonasUrbanas,Deque<Residuo> pilaResiduos){
+    public CentroRecoleccion(PriorityQueue<Zona> zonasUrbanas,BinaryTree<Residuo> arbolResiduos){
         this.zonasUrbanas = zonasUrbanas;
-        this.pilaResiduos = pilaResiduos;  
+        this.arbolResiduos = arbolResiduos;  
         this.colaResiduosRecolectadosPesos = new PriorityQueue<Residuo>(new Comparator<Residuo>(){
             @Override
             public int compare(Residuo r1, Residuo r2){
@@ -42,8 +42,8 @@ public class CentroRecoleccion implements Serializable {
         this.mapaListaResiduosPorPrioridadAmbiental = new TreeMap<>();
         this.residuosGenerados = new java.util.ArrayList<>();
     }
-    public Deque<Residuo> getPilaResiduos(){return pilaResiduos;}
-    public void addPilaResiduos(Residuo residuo){this.pilaResiduos.push(residuo);}
+    public BinaryTree<Residuo> getArbolResiduos(){return arbolResiduos;}
+    public void addArbolResiduos(Residuo residuo){this.arbolResiduos.agregar(residuo);}
 
     // Registra residuos generados (manuales y automáticos)
     public void addResiduoGenerado(Residuo residuo) { if (residuo != null) this.residuosGenerados.add(residuo); }
